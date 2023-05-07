@@ -6,6 +6,7 @@ const plumber = require("gulp-plumber");
 const autoprefixer= require('autoprefixer');
 const cssnano=require('cssnano');
 const postcss=require('gulp-postcss');
+const sourcemaps= require('gulp-sourcemaps');
 // imagenes
 const cache=require("gulp-cache");
 const webp=require("gulp-webp");
@@ -15,10 +16,20 @@ const avif=require("gulp-avif");
 // css
 function css(done){
   src('src/scss/**/*.scss')
-    .pipe(plumber())
-    .pipe(sass())
-    .pipe(postcss([autoprefixer(),cssnano()]))
-    .pipe(dest("build/css"));
+      .pipe(sourcemaps.init())
+      .pipe(plumber())
+      .pipe(sass())
+      .pipe(postcss([autoprefixer(),cssnano()]))
+      .pipe(sourcemaps.write('.'))
+      .pipe(dest("build/css"));
+
+  done()
+}
+//javascript
+function javascript(done){
+  src('src/js/**/*.js')
+    .pipe(terser())
+    .pipe(dest("build/js"));
 
 done()
 }
@@ -55,12 +66,7 @@ function versionavif(done){
   
   done();
 }
-function javascript(done){
-  src('src/js/**/*.js')
-    .pipe(dest("build/js"));
 
-done()
-}
 //watch
 function dev(done){
   
